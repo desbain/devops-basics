@@ -13,7 +13,7 @@
                     }
                 }
                 stage('Compile'){
-                    agent any
+                    agent {label 'slave1'}
                     steps{
                         echo 'compiling...'
                         sh 'mvn compile'
