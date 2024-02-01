@@ -9,18 +9,18 @@
                     agent any
                     steps{
                 echo 'cloning...'
-                        git 'https://github.com/theitern/DevOpsClassCodes.git'
+                        git 'https://github.com/desbain/devops-basics.git'
                     }
                 }
                 stage('Compile'){
-                    agent {label 'slave1'}
+                    agent {label 'Master'}
                     steps{
                         echo 'compiling...'
                         sh 'mvn compile'
                 }
                 }
                 stage('CodeReview'){
-                    agent {label 'slave1'}
+                    agent {label 'Slave_1'}
                     steps{
                     
                 echo 'codeReview...'
@@ -28,7 +28,7 @@
                     }
                 }
                 stage('UnitTest'){
-                    agent {label 'slave2'}
+                    agent {label 'Slave_1'}
                     steps{
                     echo 'Testing'
                         sh 'mvn test'
