@@ -8,7 +8,7 @@ stages{
 stage('Clone Repo')
 {
 steps{
-git 'https://github.com/theitern/DevopsBasics.git'
+git 'https://github.com/desbain/devops-basics.git'
 }
 }
 stage('Compile the code')
