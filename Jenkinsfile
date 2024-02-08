@@ -20,7 +20,7 @@
                 }
                 }
                 stage('CodeReview'){
-                    agent {label 'Slave_1'}
+                    agent {label 'Master'}
                     steps{
                     
                 echo 'codeReview...'
@@ -28,7 +28,7 @@
                     }
                 }
                 stage('UnitTest'){
-                    agent {label 'Slave_1'}
+                    agent {label 'Master'}
                     steps{
                     echo 'Testing'
                         sh 'mvn test'
