@@ -1,49 +1,49 @@
-        pipeline{
-            tools{
-                jdk 'myjava'
-                maven 'mymaven'
+pipeline {
+    tools {
+        jdk 'myjava'
+        maven 'mymaven'
+    }
+    agent any
+    stages {
+        stage('Checkout') {
+            agent { label 'master' }
+            steps {
+                echo 'Cloning repository...'
+                git 'https://github.com/desbain/devops-basics.git'  // Removed the double "https://"
             }
-            agent none
-            stages{
-                stage('Checkout'){
-                    agent any
-                    steps{
-                echo 'cloning...'
-                        git 'https://github.com/desbain/devops-basics.git'
-                    }
-                }
-                stage('Compile'){
-                    agent {label 'Master'}
-                    steps{
-                        echo 'compiling...'
-                        sh 'mvn compile'
-                }
-                }
-                stage('CodeReview'){
-                    agent {label 'Master'}
-                    steps{
-                    
-                echo 'codeReview...'
-                        sh 'mvn pmd:pmd'
-                    }
-                }
-                stage('UnitTest'){
-                    agent {label 'Master'}
-                    steps{
-                    echo 'Testing'
-                        sh 'mvn test'
-                    }
-                    post {
-                    success {
-                        junit 'target/surefire-reports/*.xml'
-                    }
-                }	
-                }
-                stage('Package'){
-                    agent any
-                    steps{
-                        sh 'mvn package'
-                    }
+        }
+        stage('Compile') {
+            agent { label 'slave1' }
+            steps {
+                echo 'Compiling...'
+                sh 'mvn compile'
+            }
+        }
+        stage('CodeReview') {
+            agent { label 'slave1' }
+            steps {
+                echo 'Running code review...'
+                sh 'mvn pmd:pmd'
+            }
+        }
+        stage('UnitTest') {
+            agent { label 'slave2' }
+            steps {
+                echo 'Running unit tests...'
+                sh 'mvn test'
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
+        stage('Package') {
+            agent any
+            steps {
+                echo 'Packaging application...'
+                sh 'mvn package'
+            }
+        }
+    }
+}
