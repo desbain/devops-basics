@@ -8,11 +8,11 @@ pipeline {
     stages {
         stage('Checkout') {
             agent {
-                label 'master'  // Changed 'Master' to 'master' for case consistency
+                label 'master'
             }
             steps {
                 echo 'Cloning repository...'
-                git 'https://github.com/desbain/devops-basics.git'  // Removed the double "https://"
+                git 'https://github.com/desbain/devops-basics.git'
             }
         }
         stage('Compile') {
@@ -20,8 +20,10 @@ pipeline {
                 label 'slave1'
             }
             steps {
-                echo 'Compiling...'
-                sh 'mvn compile'
+                dir('devops-basics') {  // Navigate to the directory where the pom.xml is located
+                    echo 'Compiling...'
+                    sh 'mvn compile'
+                }
             }
         }
         stage('CodeReview') {
@@ -29,8 +31,10 @@ pipeline {
                 label 'slave1'
             }
             steps {
-                echo 'Running code review...'
-                sh 'mvn pmd:pmd'
+                dir('devops-basics') {  // Navigate to the directory where the pom.xml is located
+                    echo 'Running code review...'
+                    sh 'mvn pmd:pmd'
+                }
             }
         }
         stage('UnitTest') {
@@ -38,22 +42,26 @@ pipeline {
                 label 'slave1'
             }
             steps {
-                echo 'Running unit tests...'
-                sh 'mvn test'
+                dir('devops-basics') {  // Navigate to the directory where the pom.xml is located
+                    echo 'Running unit tests...'
+                    sh 'mvn test'
+                }
             }
             post {
                 success {
-                    junit 'target/surefire-reports/*.xml'
+                    junit 'devops-basics/target/surefire-reports/*.xml'
                 }
             }
         }
         stage('Package') {
             agent {
-                label 'master'  // Changed 'Master' to 'master' for case consistency
+                label 'master'
             }
             steps {
-                echo 'Packaging application...'
-                sh 'mvn package'
+                dir('devops-basics') {  // Navigate to the directory where the pom.xml is located
+                    echo 'Packaging application...'
+                    sh 'mvn package'
+                }
             }
         }
     }
