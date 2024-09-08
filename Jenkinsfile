@@ -1,49 +1,44 @@
-        pipeline{
-            tools{
-                jdk 'myjava'
-                maven 'mymaven'
+pipeline {
+    tools {
+        jdk 'myjava'
+        maven 'mymaven'
+    }
+    agent any
+    stages {
+        stage('Checkout') {
+            steps {
+                echo 'Cloning...'
+                git 'https://github.com/desbain/devops-basics.git'
             }
-            agent none
-            stages{
-                stage('Checkout'){
-                    agent any
-                    steps{
-                echo 'cloning...'
-                        git 'https://github.com/desbain/devops-basics.git'
-                    }
-                }
-                stage('Compile'){
-                    agent {label 'Master'}
-                    steps{
-                        echo 'compiling...'
-                        sh 'mvn compile'
-                }
-                }
-                stage('CodeReview'){
-                    agent {label 'Master'}
-                    steps{
-                    
-                echo 'codeReview...'
-                        sh 'mvn pmd:pmd'
-                    }
-                }
-                stage('UnitTest'){
-                    agent {label 'Master'}
-                    steps{
-                    echo 'Testing'
-                        sh 'mvn test'
-                    }
-                    post {
-                    success {
-                        junit 'target/surefire-reports/*.xml'
-                    }
-                }	
-                }
-                stage('Package'){
-                    agent any
-                    steps{
-                        sh 'mvn package'
-                    }
+        }
+        stage('Compile') {
+            steps {
+                echo 'Compiling...'
+                sh 'mvn compile'
+            }
+        }
+        stage('CodeReview') {
+            steps {
+                echo 'Code Review...'
+                sh 'mvn pmd:pmd'
+            }
+        }
+        stage('UnitTest') {
+            steps {
+                echo 'Testing...'
+                sh 'mvn test'
+            }
+            post {
+                success {
+                    junit 'target/surefire-reports/*.xml'
                 }
             }
         }
+        stage('Package') {
+            steps {
+                echo 'Packaging...'
+                sh 'mvn package'
+            }
+        }
+    }
+}
